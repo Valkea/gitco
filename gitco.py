@@ -12,6 +12,7 @@ from typing import List
 from dotenv import load_dotenv
 load_dotenv(".env.gitco")
 
+__version__ = 'dev'
 
 class OutputModel(BaseModel):
     commit_messages_list: List[str] = None
