@@ -59,8 +59,10 @@ In the future, GitCo will support additional providers, allowing users to choose
 
 - **OpenAI API** (non-Azure)
 - **Anthropic**
-- **Google PaLM**
+- **Google Gemini**
 - **Hugging Face**
+- **Ollama**
+- ...
 
 For each provider, GitCo will automatically adapt based on your configuration, as set in your environment or `.env.gitco` file. Stay tuned for updates!
 
