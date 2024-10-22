@@ -1,4 +1,5 @@
 # GitCo Package
+[![PyPI version](https://badge.fury.io/py/gitco.svg)](https://badge.fury.io/py/gitco)
 
 **GitCo** is a command-line tool designed to assist in generating git commit messages by analyzing the current changes (diff) in your repository. It uses a Language Model (LLM) to suggest meaningful and concise commit messages, saving you time while keeping your commit history clear and informative.
 
