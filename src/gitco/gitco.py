@@ -54,7 +54,7 @@ def split_command(command):
     #return re.findall(pattern, command)
 
 
-def gen_commit_msg():
+def gen_commit_msg(base_msg:str = "", *arg, **argv):
 
     client = AzureOpenAI(
         api_key=config.api_key,
@@ -66,7 +66,7 @@ def gen_commit_msg():
     client = instructor.from_openai(client)
 
     diff = subprocess.check_output(['git', 'diff', '--cached'])
-    print(diff)
+    # print(diff)
 
     system_prompt = """
     You are expert at writing consise git commit messages based on the git diff --cached results
