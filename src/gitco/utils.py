@@ -1,5 +1,4 @@
 import importlib.metadata
-import typer
 import requests
 
 def get_latest_package_version(package_name):
@@ -11,12 +10,10 @@ def get_versions(package_name:str = "gitco"):
     latest_version = get_latest_package_version(package_name)
     return current_version, latest_version
 
-def get_version(get_it: bool):
-    if get_it:
-        current_version, latest_version = get_versions()
-        print(f"Current version: {current_version} || Latest version: {latest_version}")
-        warn_latest() # /!\ TMP
-        raise typer.Exit()
+def get_version(): # get_it: bool):
+    # if get_it:
+    current_version, latest_version = get_versions()
+    print(f"Current version: {current_version} || Latest version: {latest_version}")
 
 def warn_latest():
     current_version, latest_version = get_versions()
@@ -29,4 +26,5 @@ def warn_latest():
 
     if l_version > c_version:
         print(f"A new version of the `gitco` package is available. (Current version: {current_version} || Latest version: {latest_version})")
-
+    else:
+        print("Your version is the latest")
