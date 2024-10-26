@@ -9,6 +9,8 @@ import instructor
 from pydantic import BaseModel
 from typing import List
 
+from .inputs import prepare_command
+
 from dotenv import load_dotenv
 load_dotenv(".env.gitco")
 
@@ -16,6 +18,7 @@ __version__ = 'dev'
 
 class OutputModel(BaseModel):
     commit_messages_list: List[str] = None
+
 
 class config:
     provider = os.environ.get("GITCO_PROVIDER")
@@ -30,19 +33,6 @@ class config:
     except Exception as e:
         print("No provider available")
         exit(1)
-
-def prepare_command(cmd):
-    # Set up the readline prompt to include the generated command
-    readline.set_startup_hook(lambda: readline.insert_text(cmd))
-    try:
-        # Take input from the user, displaying the generated command
-        user_input = input("Modify and/or press Enter to execute: \n\n")
-    finally:
-        # Remove the readline hook
-        readline.set_startup_hook()
-
-    # Return the modified command or the original one
-    return user_input if user_input else cmd
 
 
 def split_command(command):
@@ -105,16 +95,34 @@ def gen_commit_msg(inspiration:str = "", debug:bool = False, *args, **kwargs):
     # commit_msg = response.choices[0].message.content
 
     # print(response)
-    print("="*100)
-    print(commit_msg)
-    print("="*100)
+    if debug:
+        print("="*100)
+        print(commit_msg)
+        print("="*100)
 
+    # Prepare extra positional arguments
+    l_args = list(args)
+    l_args.insert(0,"")
+    command_extra_args = (" ").join(l_args)
 
-    command_args = ('" -m "').join(response.commit_messages_list)
-    command = f'git commit -m "{command_args}"'
-    prepared_cmd = prepare_command(command)
-    print(f"Command prepared: {prepared_cmd}")
-    subprocess.check_output(split_command(prepared_cmd))
+    # Prepare extra keyword arguments
+    l_kwargs = [f"{k}={v}" for k,v in kwargs.items()]
+    l_kwargs.insert(0,"")
+    command_extra_kwargs = (" ").join(l_kwargs)
+
+    # Prepare commit messages
+    commit_msgs = response.commit_messages_list
+    commit_msgs = ('" -m "').join(commit_msgs)
+
+    # Prepare command
+    command = f'git commit{command_extra_args} -m "{commit_msgs}"{command_extra_kwargs}'
+    prepared_cmd, prepare_status = prepare_command(command)
+
+    if prepare_status == "retry":
+        gen_commit_msg(inspiration, debug, *args, **kwargs)
+    else:
+        print(f"RUN command: {prepared_cmd}")
+        subprocess.check_output(split_command(prepared_cmd))
 
 
 if __name__ == "__main__":
