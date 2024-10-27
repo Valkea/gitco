@@ -121,7 +121,7 @@ def gen_commit_msg(inspiration:str = "", debug:bool = False, *args, **kwargs):
     if prepare_status == "retry":
         gen_commit_msg(inspiration, debug, *args, **kwargs)
     else:
-        print(f"RUN command: {prepared_cmd}")
+        print(f"RUN CMD:\n{prepared_cmd}")
         subprocess.check_output(split_command(prepared_cmd))
 
 

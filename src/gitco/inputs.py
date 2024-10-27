@@ -95,7 +95,7 @@ def prepare_command(suggested_commit_msg):
     # Prompt with a default message
     # printed_lines += 2
     new_message = session.prompt(
-        f'Modify or Confirm your command:\n ',
+        f'\nModify or Confirm your command:\n ',
         default = suggested_commit_msg,
         multiline = True,
         prompt_continuation = prompt_continuation,
