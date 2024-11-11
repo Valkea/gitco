@@ -1,3 +1,5 @@
+import re
+
 from prompt_toolkit import PromptSession
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.formatted_text import HTML
@@ -91,6 +93,11 @@ def prepare_command(suggested_commit_msg):
 
     global prompt_status
     prompt_status = None
+
+    # suggested_commit_msg = 'git commit -mat "refactor: Replace typer with argparse for command-line parsing" -mo "refactor: Update gen_commit_msg function to include debug option" -m "fix: Correct get_version function to remove unnecessary parameter" -m "feature: Add debug print statements to display flags and keywords" --date "1 day ago"'
+
+    # Split the command on multiple lines for readability 
+    suggested_commit_msg = re.sub(r'([-]{1,2}\w+\s+\"[^\"]*\") ', r'\1\n', suggested_commit_msg)
 
     # Prompt with a default message
     # printed_lines += 2
