@@ -62,6 +62,10 @@ def gen_commit_msg(inspiration:str = "", debug:bool = False, *args, **kwargs):
     if debug:
         print(diff)
 
+    if diff == b'' and debug == False:
+        print("\nThere is nothing to commit")
+        exit(0)
+
     system_prompt = """
     You are expert at writing consise git commit messages based on the git diff --cached results
 
@@ -121,7 +125,7 @@ def gen_commit_msg(inspiration:str = "", debug:bool = False, *args, **kwargs):
     if prepare_status == "retry":
         gen_commit_msg(inspiration, debug, *args, **kwargs)
     else:
-        print(f"RUN CMD:\n{prepared_cmd}")
+        print(f"RUN CMD:\n {prepared_cmd}")
         subprocess.check_output(split_command(prepared_cmd))
 
 
