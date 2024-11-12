@@ -46,9 +46,6 @@ def split_command(command):
 
 def gen_commit_msg(inspiration:str = "", debug:bool = False, *args, **kwargs):
 
-    if debug:
-        print(f"Inspiration: `{inspiration}` is not used yet")
-
     client = AzureOpenAI(
         api_key=config.api_key,
         api_version=config.api_version,
@@ -66,11 +63,12 @@ def gen_commit_msg(inspiration:str = "", debug:bool = False, *args, **kwargs):
         print("\nThere is nothing to commit")
         exit(0)
 
+    # Prepare system prompt 
     system_prompt = """
     You are expert at writing consise git commit messages based on the git diff --cached results
 
-    - start with "refactor:" if the commit seems remove or changes things without adding new feature or fixing a bug.
     - start with "feature:" if the commit seems to add a new feature, class ...
+    - start with "refactor:" if the commit seems remove or changes things without adding new feature or fixing a bug.
     - start with "fix:" if the commit seems to correct a problem.
 
     If the commit contains several types of actions, make a global commit message and several sub commit messages to explain the various actions.
@@ -79,7 +77,14 @@ def gen_commit_msg(inspiration:str = "", debug:bool = False, *args, **kwargs):
     The returned strings are in double quotes.
     """
 
+    # Add user inspiration
+    user_inspiration = ""
+    if inspiration != "":
+        user_inspiration = f"Here is some context (use it to explain your generated commit msgs): ###{inspiration}### "
+
+    # Prepare user prompt 
     user_prompt = f"""
+    {user_inspiration}
     Here is the diff: ###{diff}###
     """
 
@@ -87,6 +92,11 @@ def gen_commit_msg(inspiration:str = "", debug:bool = False, *args, **kwargs):
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
     ]
+
+    if debug:
+        print("="*100)
+        print(messages)
+        print("="*100)
 
     response = client.chat.completions.create(
         model=config.deploy_name,
